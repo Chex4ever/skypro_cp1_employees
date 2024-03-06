@@ -1,4 +1,9 @@
+package pro.sky.chex4ever.cp1;
+
+import java.util.Objects;
+
 public class Employee {
+	public final static Employee NULL_EMPLOYEE = new Employee("nullSurame","nullName","nullPatronymic","nullDivision",0);
     private static int nextId=0;
     private final int id;
     private String name;
@@ -26,7 +31,28 @@ public class Employee {
     public void setSalaryInCents(int salaryInCents) {this.salaryInCents = salaryInCents;}
     public int getId() {return this.id;}
     public String toString() {
-        return this.id+" "+this.surname+" "+this.name+" "+this.patronymic+" "+this.division+" "+this.salaryInCents/100f;
+        return "id "+this.id+", ФИО: "+this.surname+" "+this.name+" "+this.patronymic+", отдел "+this.division+", оклад "+this.salaryInCents/100f;
     }
+	@Override
+	public int hashCode() {
+		return Objects.hash(surname, name, patronymic, division, salaryInCents);
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		Employee other = (Employee) obj;
+		return Objects.equals(division, other.division) && Objects.equals(name, other.name)
+				&& Objects.equals(patronymic, other.patronymic) && salaryInCents == other.salaryInCents
+				&& Objects.equals(surname, other.surname);
+	}
+    
 }
 
