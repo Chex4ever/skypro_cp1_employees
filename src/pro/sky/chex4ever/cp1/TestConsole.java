@@ -7,8 +7,8 @@ import java.io.InputStreamReader;
 public class TestConsole {
 	private enum Option {
 		SELECT_SCOPE, SELECT_ALL_EMPLOYEES, SELECT_DIVISION, SELECT_EMPLOYEE, RENAME_ORGANISATION, PRINT_SELECTION,
-		GENERATE_TEST_DATA, SALARY_INDEXING, SELECT_EMPLOYEE_WITH_MIN_SALARY,
-		SELECT_EMPLOYEE_WITH_MAX_SALARY, SELECT_EMPLOYEES_WITH_SALARY_IN_RANGE, NOOP, EXIT
+		GENERATE_TEST_DATA, SALARY_INDEXING, SELECT_EMPLOYEE_WITH_MIN_SALARY, ADD_EMPLOYEE, 
+		SELECT_EMPLOYEE_WITH_MAX_SALARY, SELECT_EMPLOYEES_WITH_SALARY_IN_RANGE, NOOP, EXIT, REMOVE_EMPLOYEE
 	}
 
 	private enum Status {
@@ -103,6 +103,19 @@ public class TestConsole {
 
 		case PRINT_SELECTION -> employeeBook.print("Выбранные сотрудники", EmployeeBook.allFields);
 		case NOOP -> {}
+		case ADD_EMPLOYEE -> {			
+			Employee exampleEmployee = employeeBook.generateTestEmployee();
+			Employee newEmployee = new Employee(
+					forceInputString("Введите фамилию",exampleEmployee.getSurname()),
+					forceInputString("Введите имя",exampleEmployee.getName()),
+					forceInputString("Введите отчество",exampleEmployee.getPatronymic()),
+					forceInputString("Введите отдел",exampleEmployee.getDivision()),
+					forceInputInt("Введите зарплату",exampleEmployee.getSalaryInCents()/100)
+					);
+			employeeBook.addEmployee(newEmployee);
+			}
+		case REMOVE_EMPLOYEE -> employeeBook.removeSelectedEmployees();
+		default -> System.out.println("Непонятная хххция: " + option);
 		
 		};
 
@@ -156,17 +169,17 @@ public class TestConsole {
 
 	private Option[] optionsAvailable() {
 		return switch (status) {
-		case SCOPE_ORGANISATION -> new Option[] { Option.SELECT_ALL_EMPLOYEES, Option.SELECT_DIVISION, Option.SELECT_EMPLOYEE,
-				Option.SELECT_EMPLOYEES_WITH_SALARY_IN_RANGE, Option.RENAME_ORGANISATION, Option.EXIT };
+		case SCOPE_ORGANISATION -> new Option[] { Option.SELECT_ALL_EMPLOYEES, Option.ADD_EMPLOYEE , Option.SELECT_DIVISION, Option.SELECT_EMPLOYEE,
+				Option.SELECT_EMPLOYEES_WITH_SALARY_IN_RANGE, Option.RENAME_ORGANISATION, Option.EXIT};
 		case SCOPE_ALL_EMPLOYEES ->
-			new Option[] { Option.SALARY_INDEXING, Option.PRINT_SELECTION, Option.SELECT_SCOPE, Option.EXIT };
+			new Option[] { Option.SALARY_INDEXING, Option.PRINT_SELECTION, Option.SELECT_SCOPE, Option.REMOVE_EMPLOYEE, Option.EXIT };
 		case SCOPE_DIVISION -> new Option[] { Option.SALARY_INDEXING, Option.SELECT_DIVISION,
-				Option.PRINT_SELECTION, Option.SELECT_SCOPE, Option.EXIT };
+				Option.PRINT_SELECTION, Option.SELECT_SCOPE, Option.REMOVE_EMPLOYEE, Option.EXIT };
 		case SCOPE_ONE_EMPLOYEE ->
-			new Option[] { Option.SALARY_INDEXING, Option.PRINT_SELECTION, Option.SELECT_SCOPE, Option.EXIT };
+			new Option[] { Option.SALARY_INDEXING, Option.PRINT_SELECTION, Option.SELECT_SCOPE, Option.REMOVE_EMPLOYEE, Option.EXIT };
 		case SCOPE_SOME_EMPLOYEE ->
-			new Option[] { Option.SALARY_INDEXING, Option.PRINT_SELECTION, Option.SELECT_SCOPE, Option.EXIT };
-		case START -> new Option[] { Option.GENERATE_TEST_DATA, Option.EXIT };
+			new Option[] { Option.SALARY_INDEXING, Option.PRINT_SELECTION, Option.SELECT_SCOPE, Option.REMOVE_EMPLOYEE, Option.EXIT };
+		case START -> new Option[] { Option.GENERATE_TEST_DATA, Option.ADD_EMPLOYEE, Option.EXIT };
 		
 		default -> throw new IllegalArgumentException("Unexpected value: " + status);
 		};
