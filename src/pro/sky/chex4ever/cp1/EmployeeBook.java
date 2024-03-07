@@ -7,18 +7,19 @@ public class EmployeeBook {
 	public enum EmployeeField {
 		ID, SURNAME, NAME, PATRONYMIC, DIVISION, SALARY
 	}
+
 	public final static EmployeeField[] allFields = EmployeeField.class.getEnumConstants();
-	public final static EmployeeField[] allFieldsWithoutDivision = new EmployeeField[] { EmployeeField.ID, EmployeeField.SURNAME,
-			EmployeeField.NAME, EmployeeField.PATRONYMIC, EmployeeField.SALARY };
+	public final static EmployeeField[] allFieldsWithoutDivision = new EmployeeField[] { EmployeeField.ID,
+			EmployeeField.SURNAME, EmployeeField.NAME, EmployeeField.PATRONYMIC, EmployeeField.SALARY };
 	public final static EmployeeField[] fio = new EmployeeField[] { EmployeeField.SURNAME, EmployeeField.NAME,
 			EmployeeField.PATRONYMIC };
 	private Employee[] employees;
 	private Employee[] selectedEmployees;
-	private final static Employee[] NULL_EMPLOYEE_ARRAY = new Employee[0];
 	private String organizationTitle = "ООО \"Рога и копыта\"";
+
 	public EmployeeBook(int generateTestEmployeeCount) {
-		if (generateTestEmployeeCount<0) {
-			generateTestEmployeeCount=-generateTestEmployeeCount;
+		if (generateTestEmployeeCount < 0) {
+			generateTestEmployeeCount = -generateTestEmployeeCount;
 		}
 		employees = new Employee[generateTestEmployeeCount];
 		for (int i = 0; i < employees.length; i++) {
@@ -38,40 +39,22 @@ public class EmployeeBook {
 		return employees.length;
 	}
 
-	private String getRandom(String[] array) {
-		int rnd = new Random().nextInt(array.length);
-		return array[rnd];
-	}
-
-	private int generateRandomIntInRange(int min, int max) {
-		Random r = new Random();
-		return r.nextInt((max - min) + 1) + min;
-	}
-
-	public void print(String title, EmployeeField[] employeeFields, Employee[]... customEmployees) {
-		Employee[] array = NULL_EMPLOYEE_ARRAY;
-		if (customEmployees.length == 0) {
-			array = employees;
-		} else {
-			array = customEmployees[0];
-		}
-		if (array.length == 0) {
-			System.out.println("\nСписок сотрудников пуст");
+	public void print(String title, EmployeeField[] employeeFields) {
+		if (selectedEmployees.length == 0) {
+			System.out.println("Сначала выберите сотрудников");
 			return;
 		}
-		Table table = new Table(title, employeeFields, array);
+		Table table = new Table(title, employeeFields, selectedEmployees);
 		table.print();
 	}
 
-	public int salariesSum(Employee[]... customEmployees) {
-		Employee[] array = NULL_EMPLOYEE_ARRAY;
-		if (customEmployees.length == 0) {
-			array = employees;
-		} else {
-			array = customEmployees[0];
+	public int salariesSum() {
+		if (selectedEmployees.length == 0) {
+			System.out.println("Сначала выберите сотрудников");
+			return 0;
 		}
 		int sum = 0;
-		for (Employee employee : array) {
+		for (Employee employee : selectedEmployees) {
 			sum += employee.getSalaryInCents();
 		}
 		return sum;
@@ -83,83 +66,57 @@ public class EmployeeBook {
 		}
 	}
 
-	public void salariesIndexingInDivision(String division, float salaryIndex) {
-		for (Employee employee : employees) {
-			if (employee.getDivision().equals(division)) {
-				employee.setSalaryInCents((int) (employee.getSalaryInCents() * (salaryIndex + 1f)));
-			}
-		}
-	}
 	public void applyChanges() {
 		int oldElementIndex;
-		for (int newElementIndex=0; newElementIndex<selectedEmployees.length;newElementIndex++) {
-			oldElementIndex=getEmployeeIndexByID(selectedEmployees[newElementIndex].getId());
-			employees[oldElementIndex]=selectedEmployees[newElementIndex];
+		for (int newElementIndex = 0; newElementIndex < selectedEmployees.length; newElementIndex++) {
+			oldElementIndex = getEmployeeIndexByID(selectedEmployees[newElementIndex].getId());
+			employees[oldElementIndex] = selectedEmployees[newElementIndex];
 		}
 	}
-	
+
 	private int getEmployeeIndexByID(int id) {
 		for (int i = 0; i < employees.length; i++) {
-			if (employees[i].getId()==id){
+			if (employees[i].getId() == id) {
 				return i;
 			}
 		}
 		return -1;
 	}
 
-	public Employee getEmployeeWithMinSalary(Employee[]... customEmployees) {
-		Employee[] array = NULL_EMPLOYEE_ARRAY;
-		if (customEmployees.length == 0) {
-			array = employees;
-		} else {
-			array = customEmployees[0];
-		}
-		if (array.length == 0) {
-			System.out.println("\nTrying to find employee with min salary in empty employees array");
-			return null;
+	public Employee getEmployeeWithMinSalary() {
+		if (selectedEmployees.length == 0) {
+			System.out.println("Сначала выберите сотрудников");
+			return Employee.NULL_EMPLOYEE;
 		}
 		int employeeIndex = 0;
-		int minSalaryInCents = array[0].getSalaryInCents();
-		for (int i = 0; i < array.length; i++) {
-			if (minSalaryInCents > array[i].getSalaryInCents()) {
-				minSalaryInCents = array[i].getSalaryInCents();
+		int minSalaryInCents = selectedEmployees[0].getSalaryInCents();
+		for (int i = 0; i < selectedEmployees.length; i++) {
+			if (minSalaryInCents > selectedEmployees[i].getSalaryInCents()) {
+				minSalaryInCents = selectedEmployees[i].getSalaryInCents();
 				employeeIndex = i;
 			}
 		}
 		return employees[employeeIndex];
 	}
 
-	public Employee getEmployeeWithMaxSalary(Employee[]... customEmployees) {
-		Employee[] array = NULL_EMPLOYEE_ARRAY;
-		if (customEmployees.length == 0) {
-			array = employees;
-		} else {
-			array = customEmployees[0];
-		}
-		if (array.length == 0) {
-			System.out.println("\nTrying to find employee with max salary in empty employees array");
-			return null;
+	public Employee getEmployeeWithMaxSalary() {
+		if (selectedEmployees.length == 0) {
+			System.out.println("Сначала выберите сотрудников");
+			return Employee.NULL_EMPLOYEE;
 		}
 		int employeeIndex = 0;
-		int maxSalaryInCents = array[0].getSalaryInCents();
-		for (int i = 0; i < array.length; i++) {
-			if (maxSalaryInCents < array[i].getSalaryInCents()) {
-				maxSalaryInCents = array[i].getSalaryInCents();
+		int maxSalaryInCents = selectedEmployees[0].getSalaryInCents();
+		for (int i = 0; i < selectedEmployees.length; i++) {
+			if (maxSalaryInCents < selectedEmployees[i].getSalaryInCents()) {
+				maxSalaryInCents = selectedEmployees[i].getSalaryInCents();
 				employeeIndex = i;
 			}
 		}
 		return employees[employeeIndex];
 	}
 
-	public int averageSalary(Employee[]... customEmployees) {
-		Employee[] array = NULL_EMPLOYEE_ARRAY;
-		if (customEmployees.length == 0) {
-			array = employees;
-		} else {
-			array = customEmployees[0];
-		}
-		assert array.length > 0 : "trying to calculate average salary in empty employees array";
-		return employees.length != 0 ? salariesSum() / employees.length : 0;
+	public int averageSalary() {
+		return salariesSum() / selectedEmployees.length;
 	}
 
 	public void selectEmployeesFromDivision(String division) {
@@ -179,50 +136,58 @@ public class EmployeeBook {
 	 * @param maxSalaryInCents send 0 if max==min. Negative for MAX_VALUE
 	 * @param customEmployees  optional custom array of employees
 	 */
-	public Employee[] getEmployeesWithSalaryInRange(int minSalaryInCents, int maxSalaryInCents,
-			Employee[]... customEmployees) {
-		Employee[] searchArray;
-		if (customEmployees.length == 0) {
-			searchArray = employees;
-		} else {
-			searchArray = customEmployees[0];
-		}
-		if (searchArray.length == 0) {
-			System.out.println("Trying to find employee with salary range in empty employees array");
-			return null;
+	public void selectEmployeesWithSalaryInRange(int minSalaryInCents, int maxSalaryInCents) {
+		if (selectedEmployees.length == 0) {
+			System.out.println("Сначала выберите сотрудников");
 		}
 		if (maxSalaryInCents == 0) {
 			maxSalaryInCents = minSalaryInCents + 1;
-		} else if (maxSalaryInCents < minSalaryInCents) {
+		} else if (maxSalaryInCents ==1) {
 			maxSalaryInCents = Integer.MAX_VALUE;
+			System.out.println("Верхняя граница отключена");
 		}
-		int returnArrayLength = 0;
-		Employee[] tempArray = new Employee[searchArray.length];
-		for (int i = 0; i < searchArray.length; i++) {
-			if (searchArray[i].getSalaryInCents() >= minSalaryInCents
-					&& searchArray[i].getSalaryInCents() < maxSalaryInCents) {
-				tempArray[returnArrayLength] = searchArray[i];
-				returnArrayLength++;
+		if (maxSalaryInCents<minSalaryInCents) {
+			int minSalaryInCentstemp=minSalaryInCents;
+			minSalaryInCents=maxSalaryInCents;
+			maxSalaryInCents=minSalaryInCentstemp;
+		}
+		int returnArrayIndex = 0;
+		Employee[] tempArray = new Employee[selectedEmployees.length];
+		for (int i = 0; i < selectedEmployees.length; i++) {
+			if (selectedEmployees[i].getSalaryInCents() >= minSalaryInCents
+					&& selectedEmployees[i].getSalaryInCents() < maxSalaryInCents) {
+				tempArray[returnArrayIndex] = selectedEmployees[i];
+				returnArrayIndex++;
 			}
 		}
-		Employee[] returnArray = new Employee[returnArrayLength];
-		System.arraycopy(tempArray, 0, returnArray, 0, returnArrayLength);
-		return returnArray;
+		selectedEmployees = new Employee[returnArrayIndex];
+		System.arraycopy(tempArray, 0, selectedEmployees, 0, returnArrayIndex);
 	}
 
-	public void removeEmployee(Employee employee) {
-		if (employees.length == 0) {
-			System.out.println("Trying to remove employee from empty list");
+	public void removeSelectedEmployees() {
+		if (selectedEmployees.length == 0) {
+			System.out.println("Сначала выберите сотрудников");
 			return;
 		}
-		Employee[] tempArr = new Employee[employees.length - 1];
-		int tempI = 0;
-		for (int i = 0; i < employees.length; i++) {
-			if (!employee.equals(employees[i])) {
-				tempArr[tempI++] = employees[i];
+		if (selectedEmployees.length == employees.length) {
+			employees = selectedEmployees = new Employee[0];
+			return;
+		}
+
+		Employee[] tempArray = new Employee[employees.length - selectedEmployees.length];
+		int tempArrayIndex = 0;
+
+		for (int indexEmployees = 0; indexEmployees < employees.length; indexEmployees++) {
+			boolean notToRemove = true;
+			for (int indexSelected = 0; indexSelected < selectedEmployees.length; indexSelected++) {
+				if (employees[indexEmployees].getId() == selectedEmployees[indexSelected].getId()) {
+				}
+			}
+			if (notToRemove) {
+				tempArray[tempArrayIndex++] = employees[indexEmployees];
 			}
 		}
-		employees = tempArr;
+		employees = tempArray;
 	}
 
 	public void addEmployee(Employee employee) {
@@ -264,11 +229,27 @@ public class EmployeeBook {
 	public void setOrganizationTitle(String organizationTitle) {
 		this.organizationTitle = organizationTitle;
 	}
+
 	public void selectAllEmployees() {
-		selectedEmployees=employees;
+		selectedEmployees = employees;
 	}
+
 	public Employee[] selectedEmployees() {
 		return selectedEmployees;
+	}
+
+	private String getRandom(String[] array) {
+		int rnd = new Random().nextInt(array.length);
+		return array[rnd];
+	}
+
+	private int generateRandomIntInRange(int min, int max) {
+		Random r = new Random();
+		return r.nextInt((max - min) + 1) + min;
+	}
+
+	public void deselect() {
+		selectedEmployees=new Employee[0];
 	}
 }
 
