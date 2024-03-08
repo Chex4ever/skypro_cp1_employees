@@ -1,5 +1,3 @@
-package pro.sky.chex4ever.cp1;
-
 import java.util.Arrays;
 import java.util.Random;
 
@@ -29,10 +27,11 @@ public class EmployeeBook {
 
 	public EmployeeBook() {
 		employees = new Employee[0];
+		selectedEmployees = new Employee[0];
 	}
 
-	public Employee getEmployee(int id) {
-		return employees.length != 0 ? this.employees[id] : Employee.NULL_EMPLOYEE;
+	public Employee getEmployee(int index) {
+		return employees.length != 0 ? this.employees[index] : Employee.NULL_EMPLOYEE;
 	}
 
 	public int size() {
@@ -48,12 +47,12 @@ public class EmployeeBook {
 		table.print();
 	}
 
-	public int salariesSum() {
+	public long salariesSum() {
 		if (selectedEmployees.length == 0) {
 			System.out.println("Сначала выберите сотрудников");
 			return 0;
 		}
-		int sum = 0;
+		long sum = 0;
 		for (Employee employee : selectedEmployees) {
 			sum += employee.getSalaryInCents();
 		}
@@ -82,7 +81,15 @@ public class EmployeeBook {
 		}
 		return -1;
 	}
-
+	private Employee getEmployeeByID(int id) {
+		for (int i = 0; i < employees.length; i++) {
+			if (employees[i].getId() == id) {
+				return employees[i];
+			}
+		}
+		return Employee.NULL_EMPLOYEE;
+	}
+	
 	public Employee getEmployeeWithMinSalary() {
 		if (selectedEmployees.length == 0) {
 			System.out.println("Сначала выберите сотрудников");
@@ -116,7 +123,7 @@ public class EmployeeBook {
 	}
 
 	public int averageSalary() {
-		return salariesSum() / selectedEmployees.length;
+		return (int)(salariesSum() / selectedEmployees.length);
 	}
 
 	public void selectEmployeesFromDivision(String division) {
@@ -131,11 +138,6 @@ public class EmployeeBook {
 		System.arraycopy(tempArray, 0, selectedEmployees, 0, resultIndex);
 	}
 
-	/**
-	 * @param minSalaryInCents more or equal
-	 * @param maxSalaryInCents send 0 if max==min. Negative for MAX_VALUE
-	 * @param customEmployees  optional custom array of employees
-	 */
 	public void selectEmployeesWithSalaryInRange(int minSalaryInCents, int maxSalaryInCents) {
 		if (selectedEmployees.length == 0) {
 			System.out.println("Сначала выберите сотрудников");
@@ -181,6 +183,7 @@ public class EmployeeBook {
 			boolean notToRemove = true;
 			for (int indexSelected = 0; indexSelected < selectedEmployees.length; indexSelected++) {
 				if (employees[indexEmployees].getId() == selectedEmployees[indexSelected].getId()) {
+					notToRemove = false;
 				}
 			}
 			if (notToRemove) {
@@ -188,6 +191,7 @@ public class EmployeeBook {
 			}
 		}
 		employees = tempArray;
+		deselect();
 	}
 
 	public void addEmployee(Employee employee) {
@@ -251,17 +255,12 @@ public class EmployeeBook {
 	public void deselect() {
 		selectedEmployees=new Employee[0];
 	}
+
+	public void selectEmployeeById(int id) {
+		selectedEmployees=new Employee[] {getEmployeeByID(id)};
+	}
 }
 
-// Привести структуру проекта к ООП.
-//
-//+1. Создать класс EmployeeBook.
-//+2. Перенести хранилище сотрудников в него(массив), закрыть к нему доступ извне (сделать приватным).
-//+3. Все статические методы по работе с массивом перенести в этот класс и сделать нестатическими.
-// 4. Добавить несколько новых методов: 
-//    1. Добавить нового сотрудника (создаем объект, заполняем поля, кладем в массив). Нужно найти
-//свободную ячейку в массиве и добавить нового сотрудника в нее. Искать нужно
-//всегда с начала, так как возможно добавление в ячейку удаленных ранее сотрудников.
 //    2. Удалить сотрудника (находим сотрудника по Ф. И. О. и/или id, обнуляем его ячейку в массиве). 
 //5. Изменить сотрудника (получить сотрудника по Ф. И. О., модернизировать его запись): 
 //    1. Изменить зарплату. 

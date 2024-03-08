@@ -1,5 +1,3 @@
-package pro.sky.chex4ever.cp1;
-
 public class Table {
 	private String title;
 	private Cell[] headers;
@@ -67,7 +65,7 @@ public class Table {
 		calculateTableWidth();
 	}
 
-	public void print() {
+	public void printBig() {
 		System.out.print("\n"+" ".repeat((width - title.length()) / 2) + title.toUpperCase());
 		printSeparator(1);
 		System.out.printf("║");
@@ -88,6 +86,27 @@ public class Table {
 			else
 				printSeparator(3);
 		}
+	}
+	public void print() {
+		System.out.print("\n"+" ".repeat((width - title.length()) / 2) + title.toUpperCase());
+		printSeparator(1);
+		System.out.printf("║");
+		for (int column = 0; column < headers.length; column++) {
+			printAlignmentString(headers[column]);
+			System.out.printf((column != headers.length - 1) ? "│" : "║");
+		}
+		printSeparator(2);
+		for (int row = 0; row < rows; row++) {
+			System.out.print("║");
+			for (int column = 0; column < columns; column++) {
+				printAlignmentString(table[row][column]);
+				System.out.printf((column != columns - 1) ? "│" : "");
+			}
+			System.out.print("║");
+			if (row != rows - 1)
+				System.out.print("\n");
+		}
+		printSeparator(3);
 	}
 
 	public class Cell {
@@ -131,26 +150,29 @@ public class Table {
 	}
 
 	private void printSeparator(int type) { // 1-top, 2-middle, 3-last
-		String left = "|", middle = "|", right = "|";
-		if (type == 1) { // ╔╤╗
+		String left = "|", middle = "|", right = "|", horizont = "─";
+		if (type == 1) { // ╔═╤═╗
 			left = "╔";
 			middle = "╤";
 			right = "╗";
+			horizont = "═";
 		}
-		if (type == 2) { // ╠╪╣
+		if (type == 2) { //   ─  ╠╪╣
 			left = "╠";
-			middle = "╪";
+			middle = "┼";
 			right = "╣";
+			horizont = "─";
 		}
 		if (type == 3) { // ╚╧╝
 			left = "╚";
 			middle = "╧";
 			right = "╝";
+			horizont = "═";
 		}
 		System.out.printf("%n" + left);
 		for (int column = 0; column < headers.length; column++) {
 			for (int i = 0; i < headers[column].width; i++) {
-				System.out.print("═");
+				System.out.print(horizont);
 			}
 			System.out.printf(column != headers.length - 1 ? middle : right + "%n");
 		}

@@ -1,5 +1,3 @@
-package pro.sky.chex4ever.cp1;
-
 public class Main {
 	public static void main(String[] args) {
 		/*

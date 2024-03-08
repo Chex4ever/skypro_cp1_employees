@@ -1,5 +1,3 @@
-package pro.sky.chex4ever.cp1;
-
 import java.util.Objects;
 
 public class Employee {
