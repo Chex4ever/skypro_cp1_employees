@@ -3,4 +3,5 @@ public class Main {
 		TestConsole console = new TestConsole();
 		console.start();
 	}
+
 }

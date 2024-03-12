@@ -103,7 +103,7 @@ public class Employee {
 			case NAME -> this.name;
 			case PATRONYMIC -> this.patronymic;
 			case DIVISION -> this.division;
-			case SALARY -> String.format("%.2f", this.salaryInCents / 100f);
+			case SALARY -> String.format("%,.2f", this.salaryInCents / 100f);
 			};
 		}
 		return result;

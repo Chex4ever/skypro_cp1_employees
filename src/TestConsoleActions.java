@@ -1,6 +1,7 @@
-enum ActionTargetType{
+enum ActionTargetType {
 	ONE_EMPLOYEE, SOME_EMPLOYEE, NO_SELECTION, START;
 }
+
 public class TestConsoleActions {
 	enum ActionEnum implements Action {
 		ADD_EMPLOYEE("Добавить сотрудника",
@@ -21,8 +22,7 @@ public class TestConsoleActions {
 						testConsole.forceInput("Введите количество добавляемых сотрудников", 10));
 			}
 		},
-		PRINT_SELECTION("Показать выборку",
-				new ActionTargetType[] { ActionTargetType.SOME_EMPLOYEE }) {
+		PRINT_SELECTION("Показать выборку", new ActionTargetType[] { ActionTargetType.SOME_EMPLOYEE }) {
 			public void action(TestConsole testConsole, EmployeeBook employeeBook) {
 				printTable("Текущая выборка", Employee.allFields.getAllFields(), employeeBook.selectedEmployees());
 			}
@@ -31,7 +31,8 @@ public class TestConsoleActions {
 				new ActionTargetType[] { ActionTargetType.NO_SELECTION }) {
 			public void action(TestConsole testConsole, EmployeeBook employeeBook) {
 				employeeBook.selectAllEmployees();
-				printTable("Все сотрудники организации "+employeeBook.getOrganizationTitle(), Employee.allFields.getAllFields(), employeeBook.selectedEmployees());
+				printTable("Все сотрудники организации " + employeeBook.getOrganizationTitle(),
+						Employee.allFields.getAllFields(), employeeBook.selectedEmployees());
 				employeeBook.deselect();
 			}
 		},
@@ -158,11 +159,15 @@ public class TestConsoleActions {
 	}
 
 	private static void printByDivisions(TestConsole testConsole, EmployeeBook employeeBook) {
-		String[] allDivisions=employeeBook.getAllDivisions();
+		String[] allDivisions = employeeBook.getAllDivisions();
 		for (String string : allDivisions) {
 			employeeBook.deselect();
 			employeeBook.selectEmployeesByDivision(string);
-			printTable("Сотрудники отделения "+string, Employee.fio.getAllFields(), employeeBook.selectedEmployees());
+			printTable("Сотрудники отделения " + string, Employee.fio.getAllFields(), employeeBook.selectedEmployees());
+			System.out.println("Cотрудников в отделении "+string+": " + employeeBook.selectedEmployees().length
+					+ "\nСумма зарплат: " + String.format("%,.2f", employeeBook.salariesSum() / 100f)
+					+ ", средняя зарплата: " + String.format("%,.2f", employeeBook.averageSalary() / 100f));
 		}
+		employeeBook.deselect();
 	}
 }

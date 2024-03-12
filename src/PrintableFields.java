@@ -2,7 +2,7 @@ import java.util.Arrays;
 enum FieldConvention {
 	ID("ID", FieldFormat.INT), SURNAME("Фамилия", FieldFormat.STRING), NAME("Имя", FieldFormat.STRING),
 	PATRONYMIC("Отчество", FieldFormat.STRING), DIVISION("Отделение", FieldFormat.STRING),
-	SALARY("Зарплата", FieldFormat.KOPECK);
+	SALARY("Зарплата", FieldFormat.MONEY);
 
 	public String title;
 	public FieldFormat format;
@@ -13,7 +13,7 @@ enum FieldConvention {
 	}
 }
 enum FieldFormat {
-	STRING, INT, KOPECK
+	STRING, INT, MONEY
 }
 public class PrintableFields {
 	private FieldConvention[] fields;

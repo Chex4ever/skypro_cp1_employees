@@ -115,7 +115,7 @@ public class TestConsole {
 		case NO_SELECTION ->
 			"Меню организации " + employeeBook.getOrganizationTitle() + "\nВсего сотрудников: " + employeeBook.size();
 		case SOME_EMPLOYEE -> "Выбрано сотрудников: " + employeeBook.selectedEmployees().length + "\nСумма зарплат: "
-				+ employeeBook.salariesSum() / 100 + ", средняя зарплата: " + employeeBook.averageSalary() / 100;
+				+ String.format("%,.2f",employeeBook.salariesSum() / 100f) + ", средняя зарплата: " + String.format("%,.2f",employeeBook.averageSalary() / 100f);
 		case START -> "Для начала работы сгенерируйте тестовых сотрудников, или начните заводить первого сотрудника";
 		default -> "Unexpected value: " + scope;
 		});

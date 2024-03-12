@@ -11,11 +11,11 @@ public class Table {
 
 	public Table(String title, FieldConvention[] fields, String[] contents) {
 		this.title = title;
-		this.rows = contents.length/fields.length;
-		this.columns = fields.length;
-		this.table = new Cell[rows][columns];
-		this.headers = new Cell[columns];
-		this.indent = 1;
+		columns = fields.length;
+		rows = contents.length/columns;
+		table = new Cell[rows][columns];
+		headers = new Cell[columns];
+		indent = 1;
 		for (int i = 0; i < fields.length; i++) {
 			headers[i] = new Cell(fields[i].title, Alignment.CENTER);
 		}
@@ -29,22 +29,22 @@ public class Table {
 			table[row][column] = switch (fields[column].format) {
 			case INT -> new Cell(content, Alignment.RIGHT);
 			case STRING -> new Cell(content, Alignment.LEFT);
-			case KOPECK -> new Cell(content, Alignment.RIGHT);
+			case MONEY -> new Cell(content, Alignment.RIGHT);
 			};
 			column++;
 		}
 
-		setColumnsWidthByContent();
+		calculateColumnsWidthByContent();
 		calculateTableWidth();
 	}
 
 	public void print() {
-		print(100500);
+		print(100500);//builder get error if print more rows than this
 	}
 	public void print(int maxRows) {
-		printRows(maxRows>rows?rows:maxRows);
+		printTable(maxRows>rows?rows:maxRows);
 	}
-	private void printRows(int rows) {
+	private void printTable(int rows) {
 		StringBuilder builder = new StringBuilder();
 		builder.append("\n" + " ".repeat((width - title.length()) / 2) + title.toUpperCase());
 		builder.append(printSeparator(1));
@@ -60,9 +60,7 @@ public class Table {
 				builder.append(printAlignmentString(table[row][column]));
 				builder.append((column != columns - 1) ? "│" : "");
 			}
-			builder.append("║");
-			if (row != rows - 1)
-				builder.append("\n");
+			builder.append("║"+((row != rows - 1)?"\n":""));
 		}
 		builder.append(printSeparator(3));
 		System.out.print(builder);
@@ -156,7 +154,7 @@ public class Table {
 		return result;
 	}
 
-	private void setColumnsWidthByContent() {
+	private void calculateColumnsWidthByContent() {
 		for (int column = 0; column < columns; column++) {
 			int maxWidth = columnContentMaxWidth(column) + indent * 2;
 			headers[column].width = maxWidth;
